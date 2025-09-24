@@ -1,0 +1,59 @@
+<resources>
+  <string name="app_name" translatable="false">CalSync</string>
+  <string name="account_type" translatable="false">at.mcbabo.calsync</string>
+  <string name="settings">Settings</string>
+  <string name="edit">Edit</string>
+  <string name="all_day_event">All-day event</string>
+  <string name="unknown">Unknown</string>
+  <string name="start_end">Start: %1$s, End: %2$s</string>
+  <string name="no_title">No Title</string>
+  <string name="calendar_details">Calendar Details</string>
+  <string name="back">Back</string>
+  <string name="delete_calendar">Delete Calendar</string>
+  <string name="details">Details</string>
+  <string name="events">Events</string>
+  <string name="color">Color</string>
+  <string name="username">Username</string>
+  <string name="password">Password</string>
+  <string name="subscribed_calendars">Subscribed Calendars</string>
+  <string name="add_calendar">Add Calendar</string>
+  <string name="permission_calendar">Calendar permissions</string>
+  <string name="permission_calendar_desc">Necessary to read and write calendars</string>
+  <string name="calendar_name">Calendar Name</string>
+  <string name="pick_file">Pick file</string>
+  <string name="name">Name</string>
+  <string name="sync_strategy">Sync Strategy</string>
+  <string name="last_sync">Last Sync</string>
+  <string name="other_options">Other options</string>
+  <string name="user_agent" translatable="false">User Agent</string>
+  <string name="save">Save</string>
+  <string name="color_palette">Color Palette</string>
+  <string name="custom_color">Custom color</string>
+  <string name="appearance">Appearance</string>
+  <string name="dark_theme">Darkmode</string>
+  <string name="general">General</string>
+  <string name="minutes">%1$d minutes</string>
+  <string name="min_short" translatable="false">%1$d min</string>
+  <string name="hours">%1$d hours</string>
+  <string name="hours_short" translatable="false">%1$d h</string>
+  <string name="hours_minutes">%1$d hours %2$d minutes</string>
+  <string name="hours_minutes_short" translatable="false">%1$d h %2$d min</string>
+  <string name="no_calendars_found">No calendars found</string>
+  <string name="sync_interval">Sync interval</string>
+  <string name="sync_interval_desc">How often calendars get synced</string>
+  <string name="on">On</string>
+  <string name="off">Off</string>
+  <string name="system">System</string>
+  <string name="user_agent_desc">Use a custom User-Agent</string>
+  <string name="authentication">Authentication</string>
+  <string name="authentication_desc">Authentication required</string>
+  <string name="sync_strategy_replace_desc">Events are pruned before sync (recommended)</string>
+  <string name="sync_strategy_sync_desc">Events are merged during sync</string>
+  <string name="developer_options">Developer Options</string>
+  <string name="remove_all_system_calendars">Remove all system calendars</string>
+  <string name="remove_all_system_calendars_desc">Tap 5 times in a row to remove all calendars associated with %1$s</string>
+  <string name="all_system_calendars_removed">All system calendars removed</string>
+  <string name="sync">Synchronize</string>
+  <string name="delete_calendar_title">Do you really want to delete this calendar?</string>
+  <string name="delete_calendar_desc">This will also delete all events that were synced by CalSync. This action cannot be undone.</string>
+</resources>

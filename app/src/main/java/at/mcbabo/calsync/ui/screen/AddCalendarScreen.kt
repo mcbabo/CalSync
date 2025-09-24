@@ -62,6 +62,7 @@ import at.mcbabo.calsync.ui.component.PreferenceSubtitle
 import at.mcbabo.calsync.ui.component.PreferenceSwitch
 import at.mcbabo.calsync.ui.theme.CalSyncTheme
 import at.mcbabo.calsync.ui.theme.colors
+import java.net.URI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,6 +122,21 @@ fun AddCalendarContent(
             )
 
             url = uri.toString()
+        }
+    }
+
+    var invalidUri by remember { mutableStateOf(false) }
+
+    fun isValidHttpOrContent(str: String): Boolean {
+        return try {
+            val uri = URI(str)
+            when (uri.scheme?.lowercase()) {
+                "http", "https" -> uri.host != null
+                "content" -> true
+                else -> false
+            }
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -214,7 +230,11 @@ fun AddCalendarContent(
             PreferenceSubtitle("Source")
             OutlinedTextField(
                 value = url,
-                onValueChange = { url = it },
+                onValueChange = {
+                    url = it
+                    invalidUri = !isValidHttpOrContent(it)
+                },
+                isError = invalidUri,
                 label = { Text("URL or File") },
                 singleLine = true,
                 trailingIcon = {

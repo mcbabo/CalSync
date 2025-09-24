@@ -3,6 +3,7 @@ package at.mcbabo.calsync.ui.screen
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +21,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -41,8 +46,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,6 +55,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import at.mcbabo.calsync.R
 import at.mcbabo.calsync.data.viewmodel.CalendarViewModel
 import at.mcbabo.calsync.ui.component.BackButton
+import at.mcbabo.calsync.ui.component.ColorPicker
 import at.mcbabo.calsync.ui.component.DeleteDialog
 import at.mcbabo.calsync.ui.component.EventListItem
 import at.mcbabo.calsync.ui.component.PreferenceSubtitle
@@ -85,9 +91,13 @@ fun CalendarDetailScreen(
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { tabs.size })
 
     var showDialog by remember { mutableStateOf(false) }
+    var showColorDialog by remember { mutableStateOf(false) }
+
+    var newColor by remember { mutableStateOf<Color?>(null) }
+    var newName by remember { mutableStateOf<String?>(null) }
 
     val blurRadius by animateDpAsState(
-        targetValue = if (showDialog) 6.dp else 0.dp,
+        targetValue = if (showDialog or showColorDialog) 6.dp else 0.dp,
         animationSpec = tween(durationMillis = 100),
         label = "BlurAnimation"
     )
@@ -107,6 +117,28 @@ fun CalendarDetailScreen(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            if ((newColor != null && newColor != Color(
+                    calendar?.color ?: 0
+                )) || (newName != null && newName != calendar?.name)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        viewModel.updateCalendar(
+                            calendar!!.copy(
+                                name = newName ?: calendar!!.name,
+                                color = newColor?.toArgb() ?: calendar!!.color
+                            )
+                        )
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Save,
+                        contentDescription = stringResource(R.string.save)
+                    )
+                }
+            }
         },
         modifier = Modifier.blur(blurRadius)
     ) { innerPadding ->
@@ -162,11 +194,9 @@ fun CalendarDetailScreen(
                                     ) {
                                         PreferenceSubtitle(stringResource(R.string.name))
                                         OutlinedTextField(
-                                            value = calendar?.name.toString(),
-                                            onValueChange = {},
+                                            value = newName ?: calendar?.name ?: "",
+                                            onValueChange = { newName = it },
                                             label = { Text(stringResource(R.string.name)) },
-                                            enabled = true,
-                                            readOnly = true,
                                             modifier = Modifier
                                                 .padding(16.dp, 4.dp)
                                                 .onSizeChanged { textFieldHeight = it.height }
@@ -187,7 +217,12 @@ fun CalendarDetailScreen(
                                                 .padding(horizontal = 16.dp)
                                                 .padding(bottom = 4.dp)
                                                 .clip(RoundedCornerShape(6.dp))
-                                                .background(Color(calendar?.color ?: 0))
+                                                .background(newColor ?: Color(calendar?.color ?: Color.Blue.toArgb()))
+                                                .clickable(
+                                                    onClick = {
+                                                        showColorDialog = true
+                                                    }
+                                                )
                                         )
                                     }
                                 }
@@ -307,6 +342,16 @@ fun CalendarDetailScreen(
                 onBack()
             }
         )
+    }
+
+    if (showColorDialog && calendar != null) {
+        ColorPicker(
+            selectedColor = Color(calendar!!.color),
+            onDismiss = { showColorDialog = false },
+        ) { color ->
+            newColor = color
+            showColorDialog = false
+        }
     }
 }
 

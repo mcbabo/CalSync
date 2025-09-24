@@ -48,8 +48,14 @@ class CalendarViewModel @Inject constructor(
     fun getEventsForCalendar(calendarId: Long) {
         runWithLoading(
             block = { repository.getSystemCalendarEvents(calendarId) },
-            onSuccess = { _events.value =  it }
+            onSuccess = { _events.value = it }
         )
+    }
+
+    fun updateCalendar(calendar: Calendar) {
+        viewModelScope.launch {
+            repository.updateCalendar(calendar)
+        }
     }
 
     fun addCalendarFromIcs(

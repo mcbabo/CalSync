@@ -14,7 +14,6 @@ import at.mcbabo.calsync.util.SystemCalendar
 import at.mcbabo.calsync.util.SystemCalendarEvent
 import at.mcbabo.calsync.util.SystemCalendarService
 import at.mcbabo.calsync.worker.SyncScheduler
-import biweekly.Biweekly
 import biweekly.component.VEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -95,12 +94,11 @@ class CalendarRepository @Inject constructor(
                     calendarDao.updateCalendarId(calendar.id, calId)
                 }
 
-                val inputStream = icsFetcher.fetch(context, calendar)
+                val ical = icsFetcher.fetch(context, calendar)
 
-                val ical = Biweekly.parse(inputStream).first()
-                    ?: throw IllegalArgumentException("Invalid ICS file")
-
-                inputStream.close()
+                if (ical == null) {
+                    return@withContext Result.failure(IllegalStateException("Failed to fetch calendar data"))
+                }
 
                 when (calendar.syncStrategy) {
                     SyncStrategy.REPLACE -> {

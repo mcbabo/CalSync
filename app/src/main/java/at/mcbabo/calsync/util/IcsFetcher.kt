@@ -3,19 +3,20 @@ package at.mcbabo.calsync.util
 import android.content.Context
 import android.os.Build
 import at.mcbabo.calsync.data.model.Calendar
+import biweekly.Biweekly
+import biweekly.ICalendar
 import biweekly.component.VEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.io.InputStream
 import javax.inject.Inject
 
 class IcsFetcher @Inject constructor(
     private val okHttpClient: OkHttpClient
 ) {
-    suspend fun fetch(context: Context, calendar: Calendar): InputStream =
+    suspend fun fetch(context: Context, calendar: Calendar): ICalendar? =
         withContext(Dispatchers.IO) {
             if (calendar.uri.toString().startsWith("http")) {
                 val requestBuilder = Request.Builder()
@@ -33,16 +34,19 @@ class IcsFetcher @Inject constructor(
                         requestBuilder.header("Authorization", credential)
                     }
                 }
-                val response = okHttpClient.newCall(requestBuilder.build()).execute()
-                if (!response.isSuccessful) {
-                    response.close()
-                    throw IllegalStateException("Request failed: ${response.code}")
+
+                okHttpClient.newCall(requestBuilder.build()).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        throw IllegalStateException("Request failed: ${response.code}")
+                    }
+                    response.body.byteStream().use { stream ->
+                        Biweekly.parse(stream).first()
+                    }
                 }
-                response.body.byteStream()
             } else {
-                val uri = calendar.uri
-                context.contentResolver.openInputStream(uri)
-                    ?: throw IllegalArgumentException("Cannot open file: ${calendar.uri}")
+                context.contentResolver.openInputStream(calendar.uri)?.use { stream ->
+                    Biweekly.parse(stream).first()
+                } ?: throw IllegalArgumentException("Cannot open file: ${calendar.uri}")
             }
         }
 }

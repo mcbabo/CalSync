@@ -21,3 +21,12 @@ fun getAppVersion(context: Context): String {
         "1.0"
     }
 }
+
+fun getAppVersionCode(context: Context): String {
+    return try {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        packageInfo.longVersionCode.toString()
+    } catch (e: Exception) {
+        "1.0"
+    }
+}

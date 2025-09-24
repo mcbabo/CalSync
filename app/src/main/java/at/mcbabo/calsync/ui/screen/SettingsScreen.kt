@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Palette
@@ -41,6 +42,7 @@ import at.mcbabo.calsync.data.store.ThemeMode
 import at.mcbabo.calsync.data.viewmodel.CalendarViewModel
 import at.mcbabo.calsync.data.viewmodel.SettingsViewModel
 import at.mcbabo.calsync.ui.component.BackButton
+import at.mcbabo.calsync.ui.component.PreferenceItem
 import at.mcbabo.calsync.ui.component.PreferenceSubtitle
 import at.mcbabo.calsync.ui.component.PreferenceSwitch
 import at.mcbabo.calsync.ui.component.PreferenceText
@@ -48,6 +50,8 @@ import at.mcbabo.calsync.ui.component.PreferencesCautionCard
 import at.mcbabo.calsync.ui.component.SyncIntervalDialog
 import at.mcbabo.calsync.ui.component.showTime
 import at.mcbabo.calsync.ui.theme.CalSyncTheme
+import at.mcbabo.calsync.util.getAppVersion
+import at.mcbabo.calsync.util.getAppVersionCode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -58,6 +62,7 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     calendarViewModel: CalendarViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = exitUntilCollapsedScrollBehavior()
 
@@ -145,6 +150,11 @@ fun SettingsScreen(
             )
 
             PreferenceSubtitle(stringResource(R.string.developer_options))
+            PreferenceItem(
+                title = stringResource(R.string.app_name),
+                description = "Version Name: ${getAppVersion(context)} | Version Code: ${getAppVersionCode(context)}",
+                icon = Icons.Outlined.BugReport,
+            )
             PreferencesCautionCard(
                 title = stringResource(R.string.remove_all_system_calendars),
                 icon = Icons.Outlined.Warning,

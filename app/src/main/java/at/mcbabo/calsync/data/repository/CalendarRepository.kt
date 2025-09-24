@@ -34,6 +34,7 @@ class CalendarRepository @Inject constructor(
 
     suspend fun updateCalendar(calendar: Calendar) {
         calendarDao.updateCalendar(calendar)
+        systemCalendarService.updateCalendar(calendar)
     }
 
     fun getEvents(calendarId: Long): Flow<List<Event>> {

@@ -90,28 +90,55 @@ class SystemCalendarService @Inject constructor(
 
     fun createCalendar(account: Account, calendar: Calendar): Long {
         val values = ContentValues().apply {
-            put(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
-            put(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
+            put(CalendarContract.Calendars.ACCOUNT_NAME, ACCOUNT_NAME)
+            put(CalendarContract.Calendars.ACCOUNT_TYPE, ACCOUNT_TYPE)
             put(CalendarContract.Calendars.NAME, calendar.name)
             put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, calendar.name)
             put(CalendarContract.Calendars.CALENDAR_COLOR, calendar.color)
             put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_OWNER)
             put(CalendarContract.Calendars.SYNC_EVENTS, 1)
             put(CalendarContract.Calendars.VISIBLE, 1)
-            put(CalendarContract.Calendars.OWNER_ACCOUNT, account.name)
+            put(CalendarContract.Calendars.OWNER_ACCOUNT, ACCOUNT_NAME)
             put(CalendarContract.Calendars.CALENDAR_TIME_ZONE, TimeZone.getDefault().id)
         }
 
         val insertUri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
             .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
-            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
-            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
+            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, ACCOUNT_NAME)
+            .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, ACCOUNT_TYPE)
             .build()
 
         val resultUri = context.contentResolver.insert(insertUri, values)
             ?: throw IllegalStateException("Failed to insert system calendar")
 
         return ContentUris.parseId(resultUri)
+    }
+
+    fun updateCalendar(calendar: Calendar): Int {
+        try {
+            val values = ContentValues().apply {
+                put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, calendar.name)
+                put(CalendarContract.Calendars.CALENDAR_COLOR, calendar.color)
+            }
+
+            val updateUri = ContentUris.withAppendedId(
+                CalendarContract.Calendars.CONTENT_URI,
+                calendar.calendarId!!
+            ).buildUpon()
+                .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
+                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, ACCOUNT_NAME)
+                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, ACCOUNT_TYPE)
+                .build()
+
+            return context.contentResolver.update(
+                updateUri,
+                values,
+                null,
+                null
+            )
+        } catch (_: Exception) {
+            return 0
+        }
     }
 
     fun deleteEvents(calendarId: Long) {

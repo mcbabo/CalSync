@@ -308,7 +308,7 @@ fun AddCalendarContent(
             ) {
                 OutlinedTextField(
                     value = userAgent ?: "",
-                    onValueChange = {},
+                    onValueChange = { userAgent = it },
                     label = { Text(stringResource(R.string.user_agent)) },
                     singleLine = true,
                     modifier = Modifier
@@ -332,7 +332,7 @@ fun AddCalendarContent(
                 Column {
                     OutlinedTextField(
                         value = username ?: "",
-                        onValueChange = {},
+                        onValueChange = { username = it },
                         label = { Text(stringResource(R.string.username)) },
                         singleLine = true,
                         modifier = Modifier
@@ -342,7 +342,7 @@ fun AddCalendarContent(
 
                     OutlinedTextField(
                         value = password ?: "",
-                        onValueChange = {},
+                        onValueChange = { password = it },
                         label = { Text(stringResource(R.string.password)) },
                         singleLine = true,
                         modifier = Modifier

@@ -30,7 +30,7 @@
   <string name="color_palette">Color Palette</string>
   <string name="custom_color">Custom color</string>
   <string name="appearance">Appearance</string>
-  <string name="dark_theme">Darkmode</string>
+  <string name="dark_theme">Dark mode</string>
   <string name="general">General</string>
   <string name="minutes">%1$d minutes</string>
   <string name="min_short" translatable="false">%1$d min</string>

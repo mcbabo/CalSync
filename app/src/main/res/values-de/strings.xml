@@ -22,7 +22,7 @@
   <string name="pick_file">Wähle Datei</string>
   <string name="name">Name</string>
   <string name="sync_strategy">Sync Strategie</string>
-  <string name="last_sync">Letze Synchronisierung</string>
+  <string name="last_sync">Letzte Synchronisierung</string>
   <string name="other_options">Erweiterte Einstellungen</string>
   <string name="save">Speichern</string>
   <string name="color_palette">Farbpalette</string>

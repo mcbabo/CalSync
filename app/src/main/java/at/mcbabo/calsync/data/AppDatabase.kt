@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
 import at.mcbabo.calsync.data.dao.CalendarDao
 import at.mcbabo.calsync.data.dao.EventDao
 import at.mcbabo.calsync.data.model.Calendar
@@ -25,11 +24,7 @@ object AppDatabaseModule {
     fun provideAppDatabase(
         @ApplicationContext context: Context
     ): AppDatabase = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "calsync")
-        .addCallback(object : RoomDatabase.Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-            }
-        })
+        .addCallback(object : RoomDatabase.Callback() {})
         .build()
 
     @Provides

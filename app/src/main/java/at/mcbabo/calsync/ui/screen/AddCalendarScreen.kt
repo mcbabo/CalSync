@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.CellTower
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Folder
@@ -73,13 +74,14 @@ fun AddCalendarScreen(
     val context = LocalContext.current
     AddCalendarContent(
         context = context,
-        onCalendarAdded = { name, url, color, syncStrategy, userAgent, username, password ->
+        onCalendarAdded = { name, url, color, syncStrategy, reminderMinutes, userAgent, username, password ->
             viewModel.addCalendarFromIcs(
                 context = context,
                 name = name,
                 uriOrUrl = url,
                 color = color,
                 syncStrategy = syncStrategy,
+                reminderMinutes = reminderMinutes?.toIntOrNull(),
                 userAgent = userAgent,
                 username = username,
                 password = password
@@ -94,13 +96,16 @@ fun AddCalendarScreen(
 @Composable
 fun AddCalendarContent(
     context: Context,
-    onCalendarAdded: (String, String, Int, SyncStrategy, String?, String?, String?) -> Unit = { _, _, _, _, _, _, _ -> },
+    onCalendarAdded: (String, String, Int, SyncStrategy, String?, String?, String?, String?) -> Unit = { _, _, _, _, _, _, _, _ -> },
     onBack: () -> Unit = {}
 ) {
     var name by remember { mutableStateOf("") }
     var url by remember { mutableStateOf("") }
     var color by remember { mutableStateOf(colors.first()) }
     var syncStrategy by remember { mutableStateOf(SyncStrategy.REPLACE) }
+
+    var showReminder by remember { mutableStateOf(false) }
+    var reminderMinutes by remember { mutableStateOf<String?>(null) }
 
     var showUserAgent by remember { mutableStateOf(false) }
     var userAgent by remember { mutableStateOf<String?>(null) }
@@ -135,7 +140,7 @@ fun AddCalendarContent(
                 "content" -> true
                 else -> false
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
@@ -161,6 +166,7 @@ fun AddCalendarContent(
                         url,
                         color.toArgb(),
                         syncStrategy,
+                        cleanInput(reminderMinutes),
                         cleanInput(userAgent),
                         cleanInput(username),
                         cleanInput(password)
@@ -266,6 +272,29 @@ fun AddCalendarContent(
             }
 
             PreferenceSwitch(
+                title = stringResource(R.string.event_reminder),
+                description = stringResource(R.string.event_reminder_desc),
+                icon = Icons.Outlined.Alarm,
+                isChecked = showReminder
+            ) {
+                showReminder = !showReminder
+            }
+
+            AnimatedVisibility(
+                visible = showReminder
+            ) {
+                OutlinedTextField(
+                    value = reminderMinutes ?: "",
+                    onValueChange = { reminderMinutes = it },
+                    label = { Text(stringResource(R.string.event_reminder)) },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp, 4.dp)
+                )
+            }
+
+            PreferenceSwitch(
                 title = stringResource(R.string.user_agent),
                 description = stringResource(R.string.user_agent_desc),
                 icon = Icons.Outlined.CellTower,
@@ -349,7 +378,7 @@ fun AddCalendarScreenPreview() {
     CalSyncTheme {
         AddCalendarContent(
             context = LocalContext.current,
-            onCalendarAdded = { _, _, _, _, _, _, _ -> }
+            onCalendarAdded = { _, _, _, _, _, _, _, _ -> }
         )
     }
 }

@@ -64,6 +64,7 @@ class CalendarViewModel @Inject constructor(
         uriOrUrl: String,
         color: Int = Color.BLUE,
         syncStrategy: SyncStrategy,
+        reminderMinutes: Int? = null,
         userAgent: String? = null,
         username: String? = null,
         password: String? = null
@@ -79,6 +80,7 @@ class CalendarViewModel @Inject constructor(
                     uriOrUrl = uriOrUrl,
                     color = color,
                     syncStrategy = syncStrategy,
+                    reminderMinutes = reminderMinutes,
                     userAgent = userAgent,
                     username = username,
                     password = password

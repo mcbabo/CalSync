@@ -51,4 +51,6 @@
   <string name="sync">Synchronisieren</string>
   <string name="delete_calendar_title">Möchtest du wirklich diesen Kalender löschen?</string>
   <string name="delete_calendar_desc">Dadurch werden auch alle Ereignisse gelöscht, die mit CalSync synchronisiert wurden. Diese Aktion kann nicht rückgängig gemacht werden.</string>
+  <string name="event_reminder">Erinnerung</string>
+  <string name="event_reminder_desc">Füge jedem Ereignis eine Standarderinnerung hinzu</string>
 </resources>

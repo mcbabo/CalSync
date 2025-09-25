@@ -58,8 +58,11 @@ class CalendarRepository @Inject constructor(
         }
     }
 
-    suspend fun mergeEvents(calendarId: Long, newEvents: List<VEvent>) {
-        val localEvents = eventDao.getEventsForCalendar(calendarId).first()
+    suspend fun mergeEvents(calendar: Calendar, newEvents: List<VEvent>) {
+        if (calendar.calendarId == null) {
+            throw IllegalStateException("Calendar must have a valid calendarId to merge events")
+        }
+        val localEvents = eventDao.getEventsForCalendar(calendar.calendarId).first()
         val localMap = localEvents.associateBy { it.icsId }
 
         val seen = mutableSetOf<String>()
@@ -78,11 +81,11 @@ class CalendarRepository @Inject constructor(
             }
         }
 
-        systemCalendarService.insertEvents(calendarId, eventsToAdd)
-        systemCalendarService.updateEvents(calendarId, eventsToUpdate)
+        systemCalendarService.insertEvents(calendar, eventsToAdd)
+        systemCalendarService.updateEvents(calendar.calendarId, eventsToUpdate)
 
         val toDelete = localEvents.filter { it.icsId !in seen }
-        systemCalendarService.deleteEvents(calendarId, toDelete.map { it.eventId })
+        systemCalendarService.deleteEvents(calendar.calendarId, toDelete.map { it.eventId })
     }
 
     suspend fun syncCalendar(context: Context, account: Account, calendar: Calendar): Result<Unit> =
@@ -103,11 +106,11 @@ class CalendarRepository @Inject constructor(
                 when (calendar.syncStrategy) {
                     SyncStrategy.REPLACE -> {
                         systemCalendarService.deleteEvents(calId)
-                        systemCalendarService.insertEvents(calId, ical.events)
+                        systemCalendarService.insertEvents(calendar, ical.events)
                     }
 
                     SyncStrategy.MERGE -> {
-                        mergeEvents(calId, ical.events)
+                        mergeEvents(calendar, ical.events)
                     }
                 }
 
@@ -140,6 +143,7 @@ class CalendarRepository @Inject constructor(
         uriOrUrl: String,
         color: Int = Color.BLUE,
         syncStrategy: SyncStrategy,
+        reminderMinutes: Int? = null,
         userAgent: String? = null,
         username: String? = null,
         password: String? = null
@@ -150,6 +154,7 @@ class CalendarRepository @Inject constructor(
                 uri = uriOrUrl.toUri(),
                 color = color,
                 syncStrategy = syncStrategy,
+                reminderMinutes = reminderMinutes,
                 userAgent = userAgent,
                 lastModified = Date(),
                 username = username,

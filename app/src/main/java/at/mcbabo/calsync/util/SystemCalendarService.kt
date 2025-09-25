@@ -185,7 +185,17 @@ class SystemCalendarService @Inject constructor(
         }
     }
 
-    fun insertEvents(calendarId: Long, events: List<VEvent>) {
+    fun insertReminder(eventId: Long, minutesBefore: Int) {
+        val values = ContentValues().apply {
+            put(CalendarContract.Reminders.EVENT_ID, eventId)
+            put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
+            put(CalendarContract.Reminders.MINUTES, minutesBefore)
+        }
+
+        context.contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, values)
+    }
+
+    fun insertEvents(calendar: Calendar, events: List<VEvent>) {
         for (vevent in events) {
             try {
                 val isAllDay = vevent.isAllDay()
@@ -194,7 +204,7 @@ class SystemCalendarService @Inject constructor(
                 val endMillis = vevent.dateEnd?.value?.time ?: continue
 
                 val valuesEvent = ContentValues().apply {
-                    put(CalendarContract.Events.CALENDAR_ID, calendarId)
+                    put(CalendarContract.Events.CALENDAR_ID, calendar.calendarId)
                     put(CalendarContract.Events.TITLE, vevent.summary?.value ?: "Untitled Event")
                     put(CalendarContract.Events.EVENT_LOCATION, vevent.location?.value)
                     put(CalendarContract.Events.DESCRIPTION, vevent.description?.value)
@@ -207,7 +217,12 @@ class SystemCalendarService @Inject constructor(
                     )
                 }
 
-                context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, valuesEvent)
+                val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, valuesEvent)
+                val eventId = ContentUris.parseId(uri!!)
+
+                if (calendar.reminderMinutes != null) {
+                    insertReminder(eventId, calendar.reminderMinutes)
+                }
             } catch (_: Exception) {
             }
         }

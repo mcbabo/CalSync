@@ -56,4 +56,6 @@
   <string name="sync">Synchronize</string>
   <string name="delete_calendar_title">Do you really want to delete this calendar?</string>
   <string name="delete_calendar_desc">This will also delete all events that were synced by CalSync. This action cannot be undone.</string>
+  <string name="event_reminder">Event Reminder</string>
+  <string name="event_reminder_desc">Add a default reminder to each event</string>
 </resources>

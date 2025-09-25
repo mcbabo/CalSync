@@ -20,9 +20,14 @@ data class Calendar(
     val eTag: String? = null,
     val syncStrategy: SyncStrategy,
     val color: Int,
+
+    val reminderMinutes: Int? = null,
+
     val errorMessage: String? = null,
     val lastModified: Date = Date(),
     val lastSync: Date? = null,
+
+    // Optional user agent to use when fetching the calendar
     val userAgent: String? = null,
 
     // Credentials (if any) associated with this calendar

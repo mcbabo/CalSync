@@ -26,7 +26,7 @@ fun BackButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
 @Composable
 fun AddButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     IconButton(
-        modifier = Modifier,
+        modifier = modifier,
         onClick = { onClick() }
     ) {
         Icon(

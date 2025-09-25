@@ -90,7 +90,7 @@ class CalendarRepository @Inject constructor(
             try {
                 var calId = calendar.calendarId
                 if (calId == null) {
-                    calId = systemCalendarService.createCalendar(account, calendar)
+                    calId = systemCalendarService.createCalendar(calendar)
                     calendarDao.updateCalendarId(calendar.id, calId)
                 }
 

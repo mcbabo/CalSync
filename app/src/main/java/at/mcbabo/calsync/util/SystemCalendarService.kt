@@ -61,8 +61,8 @@ class SystemCalendarService @Inject constructor(
             CalendarContract.Calendars.ACCOUNT_TYPE
         )
 
-        val selection = "${CalendarContract.Calendars.ACCOUNT_NAME} = ?"
-        val selectionArgs = arrayOf(ACCOUNT_NAME)
+        val selection = "${CalendarContract.Calendars.ACCOUNT_TYPE} = ?"
+        val selectionArgs = arrayOf(ACCOUNT_TYPE)
 
         val uri = CalendarContract.Calendars.CONTENT_URI
         val calendars = mutableListOf<SystemCalendar>()
@@ -88,19 +88,8 @@ class SystemCalendarService @Inject constructor(
         return calendars
     }
 
-    fun createCalendar(account: Account, calendar: Calendar): Long {
-        val values = ContentValues().apply {
-            put(CalendarContract.Calendars.ACCOUNT_NAME, ACCOUNT_NAME)
-            put(CalendarContract.Calendars.ACCOUNT_TYPE, ACCOUNT_TYPE)
-            put(CalendarContract.Calendars.NAME, calendar.name)
-            put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, calendar.name)
-            put(CalendarContract.Calendars.CALENDAR_COLOR, calendar.color)
-            put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_OWNER)
-            put(CalendarContract.Calendars.SYNC_EVENTS, 1)
-            put(CalendarContract.Calendars.VISIBLE, 1)
-            put(CalendarContract.Calendars.OWNER_ACCOUNT, ACCOUNT_NAME)
-            put(CalendarContract.Calendars.CALENDAR_TIME_ZONE, TimeZone.getDefault().id)
-        }
+    fun createCalendar(calendar: Calendar): Long {
+        val values = calendar.toCalendarProperties()
 
         val insertUri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
             .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
@@ -219,7 +208,7 @@ class SystemCalendarService @Inject constructor(
                 }
 
                 context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, valuesEvent)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
     }
